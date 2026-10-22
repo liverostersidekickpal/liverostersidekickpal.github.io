@@ -407,12 +407,16 @@ async function loadNights(){
     r.data.forEach(p => {
       const d = new Date(p.attributes.starts_at), key = dayKey(d);
       if(!byDay.has(key)) byDay.set(key, { key, date: d, periods: [] });
-      byDay.get(key).periods.push({ id: p.id, eventId: id });
+      const at = p.attributes;
+      byDay.get(key).periods.push({ id: p.id, eventId: id, count: (at.regular_count || 0) + (at.guest_count || 0) + (at.volunteer_count || 0) });
     });
   }));
   const today = dayKey(new Date());
   // Skip future nights; Check-Ins sometimes creates next week's session early.
-  S.nights = [...byDay.values()].filter(n => n.key <= today).sort((a, b) => b.key.localeCompare(a.key));
+  // Hide past nights nobody checked in to; tonight always shows so it can fill as students arrive.
+  S.nights = [...byDay.values()]
+    .filter(n => n.key === today || (n.key < today && n.periods.some(p => p.count > 0)))
+    .sort((a, b) => b.key.localeCompare(a.key));
   S.nightsAt = Date.now();
 }
 

@@ -4,7 +4,8 @@ These are the files for the Live Roster website. Upload all of them to a
 GitHub repository with GitHub Pages turned on. Keep them together; the
 page needs every file.
 
-  index.html             the app
+  index.html             the app (people sign in with Planning Center;
+                         its public Client ID is set near "CLIENT_ID")
   manifest.webmanifest   lets browsers install it as an app
   sw.js                  lets it open quickly and install in Chrome/Edge
   icon.svg, icon-*.png, apple-touch-icon.png   the app icon

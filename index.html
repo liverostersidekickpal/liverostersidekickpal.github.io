@@ -145,24 +145,12 @@ dialog .row{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-
 <div id="onboard" class="onboard hidden">
   <div class="ob-card" id="obLink">
     <div class="logo"><img src="icon.svg" alt=""> Live Roster</div>
-    <h1 style="margin-top:20px">Link your Planning Center</h1>
-    <p>Do this once on this computer. After that, the roster opens straight to tonight's check-ins.</p>
-    <div class="steps">
-      <div class="step"><div><b>Open your Planning Center keys page</b>
-        <div class="muted">Sign in if Planning Center asks you to.</div>
-        <button class="btn-gold" style="margin-top:10px" onclick="window.open('https://api.planningcenteronline.com/oauth/applications','_blank','noopener')">Open Planning Center ↗</button></div></div>
-      <div class="step"><div><b>Create a Personal Access Token</b>
-        <div class="muted">Scroll to <b style="display:inline">Personal Access Tokens</b>, click <b style="display:inline">Create one now</b>, name it "Live Roster", and click Submit.</div></div></div>
-      <div class="step"><div><b>Paste the two codes it shows you</b>
-        <div class="fields">
-          <label>Application ID<input type="text" id="obAppId" autocomplete="off" spellcheck="false"></label>
-          <label>Secret<input type="password" id="obSecret" autocomplete="off" spellcheck="false"></label>
-        </div></div></div>
-    </div>
-    <div class="err" id="obErr"></div>
-    <button class="btn-gold" id="obConnect" style="width:100%;padding:14px;font-size:16px">Connect</button>
-    <p class="note" style="margin-top:14px">🔒 These codes are saved only in this browser and are sent only to Planning Center.</p>
-    <p class="note install-tip">💡 Tip: <a href="#" class="install-btn" style="color:var(--teal)">install Live Roster as an app</a> first, then link it inside the app.</p>
+    <h1 style="margin-top:20px">Connect Planning Center</h1>
+    <p>Sign in with the Planning Center account you use for Check-Ins. You only do this once on each computer. After that, Live Roster opens straight to tonight's check-ins.</p>
+    <button class="btn-gold" id="obSignIn" style="width:100%;padding:16px;font-size:17px;margin-top:10px">Sign in with Planning Center</button>
+    <div class="err" id="obErr" style="margin-top:12px"></div>
+    <p class="note">🔒 Live Roster only reads your Check-Ins. Nothing is saved anywhere except this computer.</p>
+    <p class="note install-tip">💡 Tip: <a href="#" class="install-btn" style="color:var(--teal)">install Live Roster as an app</a> first, then sign in inside the app.</p>
   </div>
 
   <div class="ob-card hidden" id="obEvents">
@@ -238,7 +226,7 @@ dialog .row{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-
   </div>
   <label style="display:flex;gap:8px;align-items:center;margin-top:14px;color:var(--muted);font-size:14px"><input type="checkbox" id="setVol"> Include leaders who check in as volunteers</label>
   <div class="row">
-    <button class="btn-ghost" id="setUnlink" style="margin-right:auto;color:var(--red)">Unlink Planning Center</button>
+    <button class="btn-ghost" id="setUnlink" style="margin-right:auto;color:var(--red)">Sign out of Planning Center</button>
     <button id="setCancel">Cancel</button>
     <button class="btn-gold" id="setSave">Save</button>
   </div>
@@ -272,7 +260,6 @@ const store = {
 };
 
 const S = {
-  creds: store.get("creds", null),
   watch: store.get("watch", null),          // event ids to watch, null = not chosen yet
   ms: store.get("ms", "6-8"),
   hs: store.get("hs", "9-12"),
@@ -324,19 +311,80 @@ function info(p){
   return { gender, grade, level };
 }
 
+// ---------- Planning Center sign-in (OAuth with PKCE, so no secret lives in this page) ----------
+const CLIENT_ID = "0fe5dab762eaf888033b9cd48e50070066005b02b36c4076033ab102229e2156";
+const REDIRECT_URI = location.origin + location.pathname.replace(/index\.html$/, "");
+const authError = msg => Object.assign(new Error(msg), {auth: true});
+const b64url = bytes => btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+
+function readAuthCookie(){
+  const m = document.cookie.match(/(?:^|; )liveRosterAuth=([^;]*)/);
+  return m ? { refresh: decodeURIComponent(m[1]), access: null, expires: 0 } : null;
+}
+function saveAuth(a){
+  S.auth = a; store.set("auth", a);
+  // Safari copies a site's cookies (not its storage) into a web app added to the Dock,
+  // so the refresh token also lives in a cookie to keep people signed in after installing.
+  const secure = location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = a
+    ? `liveRosterAuth=${encodeURIComponent(a.refresh)}; Max-Age=${90 * 86400}; Path=/; SameSite=Lax${secure}`
+    : "liveRosterAuth=; Max-Age=0; Path=/";
+}
+S.auth = store.get("auth", null) || readAuthCookie();
+
+async function signIn(){
+  if(CLIENT_ID.startsWith("PASTE")){ $("#obErr").textContent = "This copy of Live Roster isn't set up with Planning Center yet."; return; }
+  const verifier = b64url(crypto.getRandomValues(new Uint8Array(32)));
+  const challenge = b64url(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier))));
+  store.set("pkce", verifier);
+  const url = new URL(API + "/oauth/authorize");
+  url.search = new URLSearchParams({ response_type: "code", client_id: CLIENT_ID, redirect_uri: REDIRECT_URI, scope: "check_ins", code_challenge: challenge, code_challenge_method: "S256" });
+  location.href = url;
+}
+async function tokenRequest(params){
+  let r;
+  try{
+    r = await fetch(API + "/oauth/token", { method: "POST", headers: { Accept: "application/json", "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ client_id: CLIENT_ID, ...params }) });
+  }catch{ throw new Error("Can't reach Planning Center right now. Check your internet connection."); }
+  const j = await r.json().catch(() => ({}));
+  if(!r.ok || !j.access_token) throw authError("Planning Center needs you to sign in again.");
+  saveAuth({ access: j.access_token, refresh: j.refresh_token || S.auth?.refresh, expires: Date.now() + (j.expires_in || 7200) * 1000 });
+}
+// Called on page load: finishes a sign-in when Planning Center sends people back here.
+async function finishSignIn(){
+  const q = new URLSearchParams(location.search);
+  if(!q.has("code") && !q.has("error")) return;
+  history.replaceState(null, "", REDIRECT_URI);
+  if(q.get("error")){ $("#obErr").textContent = q.get("error") === "access_denied" ? "Sign-in was cancelled. Click the button to try again." : "Planning Center sign-in didn't finish. Please try again."; return; }
+  try{ await tokenRequest({ grant_type: "authorization_code", code: q.get("code"), code_verifier: store.get("pkce", ""), redirect_uri: REDIRECT_URI }); }
+  catch(e){ $("#obErr").textContent = e.message; }
+  store.set("pkce", null);
+}
+// Access tokens last 2 hours; refresh tokens keep people signed in for 90 days of non-use.
+let refreshing = null;
+async function accessToken(force){
+  if(!S.auth) throw authError("Please sign in to Planning Center.");
+  if(!force && S.auth.access && Date.now() < S.auth.expires - 60000) return S.auth.access;
+  refreshing = refreshing || tokenRequest({ grant_type: "refresh_token", refresh_token: S.auth.refresh })
+    .catch(e => { saveAuth(null); throw e; })
+    .finally(() => { refreshing = null; });
+  await refreshing;
+  return S.auth.access;
+}
+
 // ---------- Planning Center API ----------
-async function pco(path, {all = true, creds = S.creds} = {}){
+async function pco(path, {all = true} = {}){
   let url = path.startsWith("http") ? path : API + path;
   const out = { data: [], included: [] };
-  const auth = "Basic " + btoa(creds.appId + ":" + creds.secret);
+  let retried = false;
   while(url){
     let r;
-    // Planning Center's rejection of bad codes has no CORS headers, so the browser
-    // reports it as a network failure rather than a 401.
-    try{ r = await fetch(url, { headers: { Authorization: auth }, credentials: "omit" }); }
-    catch{ throw Object.assign(new Error(navigator.onLine === false ? "You're offline. Check your internet connection." : "Can't reach Planning Center right now. Retrying… (If this keeps up, unlink and re-link in Settings.)"), {blocked: true}); }
+    const token = await accessToken();
+    try{ r = await fetch(url, { headers: { Authorization: "Bearer " + token } }); }
+    catch{ throw new Error(navigator.onLine === false ? "You're offline. Check your internet connection." : "Can't reach Planning Center right now. Retrying…"); }
     if(r.status === 429){ await new Promise(res => setTimeout(res, (+r.headers.get("Retry-After") || 2) * 1000)); continue; }
-    if(r.status === 401) throw Object.assign(new Error("Planning Center didn't accept those codes. Double-check the Application ID and Secret."), {auth: true});
+    if(r.status === 401 && !retried){ retried = true; await accessToken(true); continue; }
+    if(r.status === 401) throw authError("Planning Center needs you to sign in again.");
     if(r.status === 403) throw new Error("This Planning Center login doesn't have access to Check-Ins.");
     if(!r.ok) throw new Error("Planning Center error " + r.status + ". Try again in a minute.");
     const j = await r.json();
@@ -346,10 +394,11 @@ async function pco(path, {all = true, creds = S.creds} = {}){
   }
   return out;
 }
-async function loadEvents(creds){
-  const r = await pco("/check-ins/v2/events?filter=not_archived&order=name&per_page=100", {creds});
+async function loadEvents(){
+  const r = await pco("/check-ins/v2/events?filter=not_archived&order=name&per_page=100");
   return r.data.map(e => ({ id: e.id, name: e.attributes.name }));
 }
+function signedOut(msg){ showOnboard(); $("#obErr").textContent = msg || ""; }
 
 async function loadNights(){
   const byDay = new Map();
@@ -397,7 +446,7 @@ async function loadRoster(){
 
 let busy = false;
 async function refresh({nights = false} = {}){
-  if(busy || !S.creds || !S.watch) return;
+  if(busy || !S.auth || !S.watch) return;
   busy = true;
   try{
     // Re-check which nights exist every 5 minutes, so the roster flips to tonight on its own.
@@ -406,7 +455,7 @@ async function refresh({nights = false} = {}){
     S.loadedAt = new Date(); S.error = null;
   }catch(e){
     S.error = e.message;
-    if(e.auth){ busy = false; S.creds = null; store.set("creds", null); showOnboard(); $("#obErr").textContent = e.message; return; }
+    if(e.auth){ busy = false; signedOut(e.message); return; }
   }
   busy = false;
   render();
@@ -525,30 +574,13 @@ function renderDrawer(){
 // ---------- onboarding ----------
 function showOnboard(){
   $("#app").classList.add("hidden"); $("#onboard").classList.remove("hidden");
-  $("#obLink").classList.toggle("hidden", !!S.creds); $("#obEvents").classList.toggle("hidden", !S.creds);
+  $("#obLink").classList.toggle("hidden", !!S.auth); $("#obEvents").classList.toggle("hidden", !S.auth);
 }
 function eventChecks(box, selected){
   box.innerHTML = S.events.map(e => `<label><input type="checkbox" value="${esc(e.id)}" ${selected.includes(e.id) ? "checked" : ""}> ${esc(e.name)}</label>`).join("")
     || `<p class="note">No Check-Ins events found in this Planning Center account.</p>`;
 }
-$("#obConnect").onclick = async () => {
-  const creds = { appId: $("#obAppId").value.trim(), secret: $("#obSecret").value.trim() };
-  $("#obErr").textContent = "";
-  if(!creds.appId || !creds.secret){ $("#obErr").textContent = "Paste both the Application ID and the Secret."; return; }
-  $("#obConnect").textContent = "Connecting…";
-  try{
-    S.events = await loadEvents(creds);
-    S.creds = creds; store.set("creds", creds);
-    $("#obSecret").value = "";
-    eventChecks($("#obEvList"), S.watch || S.events.filter(e => looksYouth(e.name)).map(e => e.id));
-    showOnboard();
-  }catch(e){
-    $("#obErr").textContent = e.blocked && navigator.onLine !== false
-      ? "Planning Center didn't accept those codes. Copy the Application ID and Secret again and make sure nothing extra got pasted."
-      : e.message;
-  }
-  $("#obConnect").textContent = "Connect";
-};
+$("#obSignIn").onclick = signIn;
 $("#obDone").onclick = () => {
   const ids = [...document.querySelectorAll("#obEvList input:checked")].map(i => i.value);
   if(!ids.length){ toast("Pick at least one event"); return; }
@@ -598,8 +630,9 @@ $("#setSave").onclick = () => {
   refresh({nights: true});
 };
 $("#setUnlink").onclick = () => {
-  if(!confirm("Unlink Planning Center from this computer? You'll need to paste the codes again to reconnect.")) return;
-  S.creds = null; S.watch = null; store.set("creds", null); store.set("watch", null);
+  if(!confirm("Sign out of Planning Center on this computer? You can sign back in any time.")) return;
+  if(S.auth) fetch(API + "/oauth/revoke", { method: "POST", body: new URLSearchParams({ client_id: CLIENT_ID, token: S.auth.refresh }) }).catch(() => {});
+  saveAuth(null); S.watch = null; store.set("watch", null);
   $("#settings").close(); showOnboard();
 };
 
@@ -622,17 +655,24 @@ let timer;
 async function startApp(){
   $("#onboard").classList.add("hidden"); $("#app").classList.remove("hidden");
   render();
-  try{ if(!S.events.length) S.events = await loadEvents(S.creds); }
-  catch(e){ S.error = e.message; if(e.auth){ S.creds = null; store.set("creds", null); showOnboard(); $("#obErr").textContent = e.message; return; } }
+  try{ if(!S.events.length) S.events = await loadEvents(); }
+  catch(e){ S.error = e.message; if(e.auth){ signedOut(e.message); return; } }
   await refresh({nights: true});
   clearInterval(timer);
   timer = setInterval(() => { if(!document.hidden) refresh(); }, POLL_MS);
 }
 document.addEventListener("visibilitychange", () => { if(!document.hidden) refresh(); });
 
-if(S.creds && S.watch) startApp();
-else if(S.creds) loadEvents(S.creds).then(ev => { S.events = ev; eventChecks($("#obEvList"), ev.filter(e => looksYouth(e.name)).map(e => e.id)); showOnboard(); }).catch(() => { S.creds = null; showOnboard(); });
-else showOnboard();
+(async () => {
+  await finishSignIn();
+  if(S.auth && S.watch) return startApp();
+  if(!S.auth) return showOnboard();
+  try{
+    S.events = await loadEvents();
+    eventChecks($("#obEvList"), S.events.filter(e => looksYouth(e.name)).map(e => e.id));
+    showOnboard();
+  }catch(e){ signedOut(e.message); }
+})();
 })();
 </script>
 </body>

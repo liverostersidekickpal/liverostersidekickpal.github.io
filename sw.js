@@ -1,7 +1,7 @@
 // Lets Live Roster install as an app and open without a connection.
 // Always tries the network first so everyone gets updates right away;
 // Planning Center requests are never cached.
-const CACHE = "live-roster-v1";
+const CACHE = "live-roster-v2";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 
 self.addEventListener("install", e => {

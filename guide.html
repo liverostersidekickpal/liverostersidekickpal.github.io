@@ -42,8 +42,9 @@ nav a.small{font-size:14px;color:var(--muted);text-decoration:none}
 /* hero */
 .hero{padding:40px 0 30px;display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
 .eyebrow{display:inline-block;font-size:12px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--gold);background:#ffbe3d1a;padding:5px 11px;border-radius:999px}
+.nw{white-space:nowrap}
 h1{font-size:clamp(34px,5.4vw,52px);line-height:1.05;margin:16px 0 14px;letter-spacing:-.5px}
-h1 span{background:linear-gradient(135deg,var(--gold),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+h1 .grad{background:linear-gradient(135deg,var(--gold),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
 .lede{color:var(--muted);font-size:19px;margin:0 0 24px}
 .cta{display:flex;gap:10px;flex-wrap:wrap}
 
@@ -134,7 +135,7 @@ footer{color:var(--dim);font-size:13px;text-align:center;padding:30px 20px 40px}
   <header class="hero">
     <div>
       <span class="eyebrow">Free for youth pastors</span>
-      <h1>Tonight's check-ins, <span>wheel-ready.</span></h1>
+      <h1>Tonight's <span class="nw">check-ins,</span> <span class="grad">wheel-ready.</span></h1>
       <p class="lede">Live Roster pulls the students who actually checked in tonight from Planning Center and splits them into groups. Copy any group and paste it into the Sidekick Pro wheel.</p>
       <div class="cta">
         <a class="btn" href="./">Open Live Roster →</a>

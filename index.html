@@ -427,7 +427,9 @@ async function loadRoster(){
   if(!night){ S.roster = []; return; }
   const seen = new Map();
   for(const p of night.periods){
-    const r = await pco(`/check-ins/v2/event_periods/${p.id}/check_ins?include=person&per_page=100`);
+    // Only ask for names, gender and grade, never contact or medical info.
+    const r = await pco(`/check-ins/v2/events/${p.eventId}/event_periods/${p.id}/check_ins?include=person&per_page=100` +
+      "&fields[CheckIn]=first_name,last_name,kind,person&fields[Person]=first_name,last_name,gender,grade");
     const people = new Map(r.included.filter(x => x.type === "Person").map(x => [x.id, x.attributes]));
     r.data.forEach(ci => {
       const a = ci.attributes;

@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Roster Setup Guide</title>
+<meta name="description" content="Get tonight's Planning Center check-ins as copy-ready name lists for the Sidekick Pro wheel. Free, and set up in about two minutes.">
+<meta property="og:title" content="Live Roster: tonight's check-ins, wheel-ready">
+<meta property="og:description" content="A free tool for youth pastors. Copy tonight's students, guys, girls, MS or HS straight into the Sidekick Pro wheel.">
+<meta property="og:image" content="https://wheelreadysidekickpal.github.io/icon-512.png">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{
+  --bg:#0b0d17; --bg2:#121527; --card:#171b30; --card2:#1e2340; --line:#2a3052;
+  --text:#f1f2fb; --muted:#9aa1c2; --dim:#5d6488;
+  --gold:#ffbe3d; --teal:#3ee0c8; --blue:#5b8cff; --pink:#ff6fb5; --violet:#a07cff; --green:#4cd97b;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--text);font:17px/1.6 "Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:
+    radial-gradient(1100px 560px at 0% -10%, #2a1f5a66, transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, #0e4d5a55, transparent 60%),
+    var(--bg);
+}
+a{color:var(--teal)}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:800;border-radius:14px;padding:14px 22px;background:linear-gradient(135deg,#ffd36b,#ffaa1f);color:#2a1a00}
+.btn:hover{filter:brightness(1.06)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);font-weight:700}
+kbd{background:var(--card2);border:1px solid var(--line);border-radius:7px;padding:1px 7px;font:inherit;font-size:.88em;white-space:nowrap}
+
+/* nav */
+nav{display:flex;align-items:center;gap:10px;padding:20px 0}
+nav .brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:19px;color:var(--text);text-decoration:none}
+nav img{width:34px;height:34px;border-radius:10px}
+nav .spacer{flex:1}
+nav a.small{font-size:14px;color:var(--muted);text-decoration:none}
+
+/* hero */
+.hero{padding:40px 0 30px;display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
+.eyebrow{display:inline-block;font-size:12px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--gold);background:#ffbe3d1a;padding:5px 11px;border-radius:999px}
+h1{font-size:clamp(34px,5.4vw,52px);line-height:1.05;margin:16px 0 14px;letter-spacing:-.5px}
+h1 span{background:linear-gradient(135deg,var(--gold),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{color:var(--muted);font-size:19px;margin:0 0 24px}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+
+/* mini app preview (made-up names) */
+.preview{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;box-shadow:0 30px 60px -30px #000;transform:rotate(1.2deg)}
+.pv-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:#ff4d6d22;color:#ff8da1}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:#ff4d6d;animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #ff4d6d99}70%{box-shadow:0 0 0 8px #ff4d6d00}100%{box-shadow:0 0 0 0 #ff4d6d00}}
+.pv-top b{margin-left:auto;font-size:26px;font-weight:900}
+.pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pv{position:relative;background:var(--card2);border-radius:13px;padding:10px 11px 9px;overflow:hidden}
+.pv::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--c)}
+.pv .h{display:flex;justify-content:space-between;font-weight:800;font-size:13px}
+.pv .h i{font-style:normal;color:var(--c);font-size:18px;line-height:1}
+.pv .n{color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:2px 0 7px}
+.pv .c{font-size:11px;font-weight:800;text-align:center;border-radius:8px;padding:4px;background:color-mix(in srgb,var(--c) 22%,transparent)}
+.pv.copied .c{background:var(--green);color:#03250f}
+
+/* sections */
+section{padding:34px 0}
+h2{font-size:28px;line-height:1.2;margin:0 0 8px;letter-spacing:-.3px}
+.kicker{font-size:12px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.sub{color:var(--muted);margin:0 0 22px}
+.story{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px 28px}
+.story p{margin:0 0 12px}
+.story p:last-child{margin:0}
+.story .pull{font-size:21px;font-weight:700;line-height:1.4;color:var(--text);border-left:4px solid var(--gold);padding-left:16px;margin:4px 0 16px}
+
+.needs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.need{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+.need .ic{font-size:24px}
+.need b{display:block;margin:6px 0 2px}
+.need span{color:var(--muted);font-size:15px}
+
+.steps{display:flex;flex-direction:column;gap:14px;counter-reset:s}
+.step{display:grid;grid-template-columns:52px 1fr;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px}
+.step::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:52px;height:52px;border-radius:16px;font-size:24px;font-weight:900;color:#2a1a00;background:linear-gradient(135deg,#ffd36b,#ffaa1f)}
+.step h3{margin:2px 0 4px;font-size:20px}
+.step p{margin:0;color:var(--muted)}
+.step p+p{margin-top:8px}
+.step.optional::before{background:var(--card2);color:var(--muted);content:"+"}
+.tag{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:var(--card2);border-radius:6px;padding:2px 7px;margin-left:6px;vertical-align:middle}
+
+.night{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ncard{background:linear-gradient(160deg,#1c2142,#151a33);border:1px solid var(--line);border-radius:20px;padding:20px}
+.ncard .big{font-size:32px}
+.ncard h3{margin:8px 0 4px;font-size:18px}
+.ncard p{margin:0;color:var(--muted);font-size:15px}
+
+.tips{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;margin:0;padding:0;list-style:none}
+.tips li{padding-left:28px;position:relative;color:var(--muted);font-size:15.5px}
+.tips li::before{content:"✓";position:absolute;left:0;top:0;color:var(--green);font-weight:900}
+.tips b{color:var(--text)}
+
+details{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:0 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:700;padding:16px 0;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--muted);font-size:22px;line-height:1}
+details[open] summary::after{content:"–"}
+details p{margin:0 0 16px;color:var(--muted)}
+
+.final{text-align:center;background:linear-gradient(135deg,#231d48,#122a3a);border:1px solid var(--line);border-radius:26px;padding:38px 24px;margin:20px 0 10px}
+.final h2{margin-bottom:6px}
+.final p{color:var(--muted);margin:0 0 20px}
+.url{font-family:ui-monospace,Menlo,monospace;font-size:15px;color:var(--text);background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;display:inline-block;margin-top:16px;word-break:break-all}
+footer{color:var(--dim);font-size:13px;text-align:center;padding:30px 20px 40px}
+
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr;padding-top:16px}
+  .preview{transform:none}
+  .needs,.night{grid-template-columns:1fr}
+  .tips{grid-template-columns:1fr}
+  .step{grid-template-columns:1fr;gap:10px}
+  .story{padding:22px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="./"><img src="icon.svg" alt=""> Live Roster</a>
+    <div class="spacer"></div>
+    <a class="small" href="#setup">Setup</a>
+    <a class="small" href="#faq" style="margin-left:14px">FAQ</a>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <span class="eyebrow">Free for youth pastors</span>
+      <h1>Tonight's check-ins, <span>wheel-ready.</span></h1>
+      <p class="lede">Live Roster pulls the students who actually checked in tonight from Planning Center and splits them into groups. Copy any group and paste it into the Sidekick Pro wheel.</p>
+      <div class="cta">
+        <a class="btn" href="./">Open Live Roster →</a>
+        <a class="btn ghost" href="#setup">2-minute setup</a>
+      </div>
+    </div>
+    <div class="preview" aria-label="Example of the Live Roster screen with made-up names">
+      <div class="pv-top"><span class="live">Live now</span><span style="font-weight:800;font-size:14px">Youth Group</span><b>24</b></div>
+      <div class="pv-grid">
+        <div class="pv" style="--c:var(--gold)"><div class="h">Everyone <i>24</i></div><div class="n">Abby, Caleb, Ella, Jonah, Lily…</div><div class="c">Copy list</div></div>
+        <div class="pv copied" style="--c:var(--blue)"><div class="h">Guys <i>13</i></div><div class="n">Caleb, Eli, Jonah, Luke…</div><div class="c">✓ Copied</div></div>
+        <div class="pv" style="--c:var(--violet)"><div class="h">High School <i>15</i></div><div class="n">Abby, Grace, Luke, Noah…</div><div class="c">Copy list</div></div>
+        <div class="pv" style="--c:var(--pink)"><div class="h">MS Girls <i>5</i></div><div class="n">Ella, Ivy, Lily, Ruby, Zoe</div><div class="c">Copy list</div></div>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="kicker">Why this exists</div>
+    <div class="story">
+      <p class="pull">Sidekick Pro's name wheel is one of the most fun parts of youth group, but a wheel with every student's name on it doesn't work when half of them aren't in the room.</p>
+      <p>Our group is different every night. I didn't want to pick a student who wasn't there, and I didn't want to retype names before every game. We already check everyone in through Planning Center, so the list of who's here already exists.</p>
+      <p>Live Roster grabs that list, splits it however I need (guys, girls, high school, middle school, HS guys, MS girls, or a single grade), and gives me a <b>Copy</b> button for each. I paste it into Sidekick's wheel and we're spinning. It's free to run, so I'm sharing it with any youth pastor who wants it.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">Before you start</div>
+    <h2>What you need</h2>
+    <p class="sub">There's nothing to buy or install, and you don't need any technical setup.</p>
+    <div class="needs">
+      <div class="need"><div class="ic">🗂️</div><b>Planning Center Check-Ins</b><span>Your own login, with access to your youth events' check-ins. You don't need to be an admin.</span></div>
+      <div class="need"><div class="ic">💻</div><b>A Mac or PC</b><span>Use Chrome, Edge, or Safari, ideally the same computer you run Sidekick Pro on.</span></div>
+      <div class="need"><div class="ic">🎡</div><b>Sidekick Pro</b><span>Or any slideshow or name picker that lets you paste in a list of names.</span></div>
+    </div>
+  </section>
+
+  <section id="setup">
+    <div class="kicker">One-time setup</div>
+    <h2>Set it up in about two minutes</h2>
+    <p class="sub">You only do this once on each computer.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h3>Open Live Roster</h3>
+        <p>Go to <a href="./">wheelreadysidekickpal.github.io</a>. Bookmark it, or install it with the optional step below.</p>
+      </div></div>
+      <div class="step"><div>
+        <h3>Sign in with Planning Center</h3>
+        <p>Click <b>Sign in with Planning Center</b>, log in like you normally do, and click <b>Allow</b>. There are no codes or keys to copy.</p>
+        <p>Live Roster can only see what <i>you</i> can see in Check-Ins, and it only reads names, gender, and grade.</p>
+      </div></div>
+      <div class="step"><div>
+        <h3>Pick your youth events</h3>
+        <p>Tick the Check-Ins events that are youth group (for example, <i>MS Youth Group</i> and <i>HS Youth Group</i>) and click <b>Done</b>. From then on, Live Roster switches to whichever of these events is checking people in tonight.</p>
+      </div></div>
+      <div class="step optional"><div>
+        <h3>Put it in your Dock <span class="tag">Optional</span></h3>
+        <p><b>Chrome / Edge:</b> click <b>⬇ Install app</b> at the top of Live Roster, then sign in inside the app.<br>
+        <b>Safari:</b> sign in first, then choose <kbd>File</kbd> → <kbd>Add to Dock</kbd>.</p>
+        <p>After that, it opens like any other app, in its own window.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">Every youth night</div>
+    <h2>Open, copy, paste, spin</h2>
+    <p class="sub">There's no refreshing or setup. The list updates every 30 seconds as students check in.</p>
+    <div class="night">
+      <div class="ncard"><div class="big">⚡</div><h3>1. Open Live Roster</h3><p>It's already on tonight's event, with everyone who has checked in so far.</p></div>
+      <div class="ncard"><div class="big">📋</div><h3>2. Copy a group</h3><p>Pick a group, like <b>Everyone</b>, <b>HS Guys</b>, or <b>MS Girls</b>, and click <b>Copy list</b>.</p></div>
+      <div class="ncard"><div class="big">🎡</div><h3>3. Paste into Sidekick</h3><p>Open the wheel in Sidekick Pro and paste the names into its list. That's it, time to spin.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">Handy extras</div>
+    <h2>Good to know</h2>
+    <ul class="tips">
+      <li><b>Name style:</b> choose first names, first name + last initial, or full names. <b>Smart</b> adds a last initial only when two students share a first name.</li>
+      <li><b>Paste format:</b> one name per line, or commas, whichever your wheel accepts.</li>
+      <li><b>Someone left early?</b> Click 👀 on a group and untick them.</li>
+      <li><b>Missing gender or grade?</b> A note tells you who's missing info, and you can set it right there. Your fix is remembered on that computer.</li>
+      <li><b>Different grade levels?</b> In ⚙ Settings, you can change which grades count as middle school and high school.</li>
+      <li><b>Leaders</b> who check in as volunteers are left out unless you turn them on in Settings.</li>
+      <li><b>Looking back:</b> the night menu lets you pull up any recent youth night.</li>
+      <li><b>Your groups:</b> Everyone, Guys, Girls, HS, MS, HS Guys, HS Girls, MS Guys, MS Girls, plus each grade.</li>
+    </ul>
+  </section>
+
+  <section id="faq">
+    <div class="kicker">Questions</div>
+    <h2>FAQ</h2>
+    <details><summary>Does it cost anything?</summary><p>No. It's free, and there's no account to make beyond the Planning Center login you already have.</p></details>
+    <details><summary>Do I need to be a Planning Center admin?</summary><p>No. You just need to be able to see your youth events' check-ins in Planning Center Check-Ins. If you can't see an event there, Live Roster can't either. Ask your church's Planning Center admin for Check-Ins access.</p></details>
+    <details><summary>Is my students' information safe?</summary><p>Live Roster only asks Planning Center for names, gender, and grade. It never downloads addresses, phone numbers, or medical notes. The list goes straight from Planning Center to your browser, and nothing is stored anywhere except your own computer.</p></details>
+    <details><summary>Will I have to sign in every week?</summary><p>No. You stay signed in on that computer. Planning Center only asks again if you don't use Live Roster for 90 days.</p></details>
+    <details><summary>It says no one has checked in, or I don't see my events.</summary><p>Make sure the right events are ticked in ⚙ Settings, and that the event has a session today in Check-Ins. Live Roster shows tonight as soon as Check-Ins opens the session, and the list fills in as students check in.</p></details>
+    <details><summary>Can I use it on more than one computer?</summary><p>Yes. Open the link on each computer and sign in once on each.</p></details>
+    <details><summary>How do I sign out or remove access?</summary><p>In Live Roster, open ⚙ Settings and click <b>Sign out of Planning Center</b>. You can also remove "Live Roster" from <b>Authorized Apps</b> in your Planning Center API settings at any time.</p></details>
+  </section>
+
+  <div class="final">
+    <h2>Ready for your next game night?</h2>
+    <p>Set it up once, then copy tonight's crowd in one click every week.</p>
+    <a class="btn" href="./">Open Live Roster →</a><br>
+    <span class="url">https://wheelreadysidekickpal.github.io</span>
+  </div>
+</div>
+<footer>Made by a youth pastor, for youth pastors. Free to use and share.<br>Not affiliated with Download Youth Ministry, Sidekick Pro, or Planning Center.</footer>
+</body>
+</html>

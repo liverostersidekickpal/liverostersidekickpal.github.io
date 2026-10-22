@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Live Roster Setup Guide</title>
-<meta name="description" content="Get tonight's Planning Center check-ins as copy-ready name lists for the Sidekick Pro wheel. Free, and set up in about two minutes.">
-<meta property="og:title" content="Live Roster: tonight's check-ins, wheel-ready">
-<meta property="og:description" content="A free tool for youth pastors. Copy tonight's students, guys, girls, MS or HS straight into the Sidekick Pro wheel.">
-<meta property="og:image" content="https://wheelreadysidekickpal.github.io/icon-512.png">
+<meta name="description" content="Get tonight's Planning Center check-ins as copy-ready name lists for Sidekick Pro's Pick Me and wheel, plus even teams in one click. Free, and set up in about two minutes.">
+<meta property="og:title" content="Live Roster: tonight's check-ins, Sidekick-ready">
+<meta property="og:description" content="A free tool for youth pastors. Copy tonight's students into Sidekick Pro's Pick Me, spot first-time guests, and make even teams in one click.">
+<meta property="og:image" content="https://liverostersidekickpal.github.io/icon-512.png">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
@@ -116,7 +116,38 @@ details p{margin:0 0 16px;color:var(--muted)}
 .url{font-family:ui-monospace,Menlo,monospace;font-size:15px;color:var(--text);background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;display:inline-block;margin-top:16px;word-break:break-all}
 footer{color:var(--dim);font-size:13px;text-align:center;padding:30px 20px 40px}
 
+/* ideas */
+.ideas{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.idea{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;position:relative}
+.idea.star{border-color:#ffbe3d77;background:linear-gradient(160deg,#2a2440,#171b30)}
+.idea .ic{font-size:26px}
+.idea h3{margin:6px 0 4px;font-size:18px}
+.idea p{margin:0;color:var(--muted);font-size:15px}
+.idea .badge{position:absolute;top:14px;right:14px;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#2a1a00;background:var(--gold);border-radius:6px;padding:2px 8px}
+.idea .limit{display:inline-block;margin-top:8px;font-size:12px;font-weight:700;color:var(--teal);background:#3ee0c814;border-radius:6px;padding:2px 8px}
+
+/* feature spotlights */
+.spot{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;background:linear-gradient(135deg,#1c2142,#151a33);border:1px solid var(--line);border-radius:24px;padding:26px}
+.spot h2{margin-bottom:8px}
+.spot p{color:var(--muted);margin:0 0 10px}
+.spot ul{margin:0;padding-left:20px;color:var(--muted)}
+.spot li{margin:4px 0}
+.spot li b{color:var(--text)}
+.mini-teams{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mt{background:var(--card);border-radius:14px;border-top:4px solid var(--tc);padding:10px 12px}
+.mt b{display:flex;align-items:center;gap:6px;font-size:15px}
+.mt b::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--tc)}
+.mt small{display:block;color:var(--dim);font-size:11px;margin:1px 0 4px}
+.mt span{display:block;color:var(--muted);font-size:13px;line-height:1.45}
+.welcome{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;text-align:center}
+.welcome .wave{font-size:40px}
+.welcome b{display:block;font-size:22px;margin:4px 0}
+.welcome span{color:var(--muted);font-size:14px}
+.welcome .names{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+.welcome .names i{font-style:normal;background:#4cd97b22;color:#9af0b8;border-radius:999px;padding:3px 10px;font-size:14px;font-weight:700}
+
 @media (max-width:760px){
+  .ideas,.spot,.mini-teams{grid-template-columns:1fr}
   .hero{grid-template-columns:1fr;padding-top:16px}
   .preview{transform:none}
   .needs,.night{grid-template-columns:1fr}
@@ -131,27 +162,28 @@ footer{color:var(--dim);font-size:13px;text-align:center;padding:30px 20px 40px}
   <nav>
     <a class="brand" href="./"><img src="icon.svg" alt=""> Live Roster</a>
     <div class="spacer"></div>
-    <a class="small" href="#setup">Setup</a>
+    <a class="small" href="#ideas">Ideas</a>
+    <a class="small" href="#setup" style="margin-left:14px">Setup</a>
     <a class="small" href="#faq" style="margin-left:14px">FAQ</a>
   </nav>
 
   <header class="hero">
     <div>
       <span class="eyebrow">Free for youth pastors</span>
-      <h1>Tonight's <span class="nw">check-ins,</span> <span class="grad">wheel-ready.</span></h1>
-      <p class="lede">Live Roster pulls the students who actually checked in tonight from Planning Center and splits them into groups. Copy any group and paste it into the Sidekick Pro wheel.</p>
+      <h1>Tonight's <span class="nw">check-ins,</span> <span class="grad">Sidekick-ready.</span></h1>
+      <p class="lede">Live Roster pulls the students who actually checked in tonight from Planning Center. Copy any group into Sidekick Pro's <b>Pick Me</b> or wheel, welcome your <b>first-time guests</b>, and make <b>even teams</b> in one click.</p>
       <div class="cta">
         <a class="btn" href="./">Open Live Roster →</a>
         <a class="btn ghost" href="#setup">2-minute setup</a>
       </div>
     </div>
     <div class="preview" aria-label="Example of the Live Roster screen with made-up names">
-      <div class="pv-top"><span class="live">Live now</span><span style="font-weight:800;font-size:14px">Youth Group</span><b>24</b></div>
+      <div class="pv-top"><span class="live">Live now</span><span style="font-weight:800;font-size:14px">Youth Group</span><b>34</b></div>
       <div class="pv-grid">
-        <div class="pv" style="--c:var(--gold)"><div class="h">Everyone <i>24</i></div><div class="n">Abby, Caleb, Ella, Jonah, Lily…</div><div class="c">Copy list</div></div>
-        <div class="pv copied" style="--c:var(--blue)"><div class="h">Guys <i>13</i></div><div class="n">Caleb, Eli, Jonah, Luke…</div><div class="c">✓ Copied</div></div>
-        <div class="pv" style="--c:var(--violet)"><div class="h">High School <i>15</i></div><div class="n">Abby, Grace, Luke, Noah…</div><div class="c">Copy list</div></div>
-        <div class="pv" style="--c:var(--pink)"><div class="h">MS Girls <i>5</i></div><div class="n">Ella, Ivy, Lily, Ruby, Zoe</div><div class="c">Copy list</div></div>
+        <div class="pv copied" style="--c:var(--gold)"><div class="h">Everyone <i>34</i></div><div class="n">Abby, Caleb, Ella, Jonah, Lily…</div><div class="c">✓ Copied</div></div>
+        <div class="pv" style="--c:var(--green)"><div class="h">First-timers <i>3</i></div><div class="n">Maya, Owen, Ruby</div><div class="c">Copy list</div></div>
+        <div class="pv" style="--c:var(--violet)"><div class="h">High School <i>21</i></div><div class="n">Abby, Grace, Luke, Noah…</div><div class="c">Copy list</div></div>
+        <div class="pv" style="--c:var(--pink)"><div class="h">MS Girls <i>6</i></div><div class="n">Ella, Ivy, Lily, Nora, Zoe…</div><div class="c">Copy list</div></div>
       </div>
     </div>
   </header>
@@ -159,10 +191,67 @@ footer{color:var(--dim);font-size:13px;text-align:center;padding:30px 20px 40px}
   <section>
     <div class="kicker">Why this exists</div>
     <div class="story">
-      <p class="pull">Sidekick Pro's name wheel is one of the most fun parts of youth group, but a wheel with every student's name on it doesn't work when half of them aren't in the room.</p>
+      <p class="pull">Sidekick Pro's name pickers are some of the most fun parts of youth group, but a list with every student's name on it doesn't work when half of them aren't in the room.</p>
       <p>Our group is different every night. I didn't want to pick a student who wasn't there, and I didn't want to retype names before every game. We already check everyone in through Planning Center, so the list of who's here already exists.</p>
-      <p>Live Roster grabs that list, splits it however I need (guys, girls, high school, middle school, HS guys, MS girls, or a single grade), and gives me a <b>Copy</b> button for each. I paste it into Sidekick's wheel and we're spinning. It's free to run, so I'm sharing it with any youth pastor who wants it.</p>
-      <p class="aside"><span class="aside-ic">📵</span><span><b>Great for phones-away groups, too.</b> If your group already puts phones away, or not every student has a phone, joining the wheel by scanning a QR code isn't really an option. Live Roster puts every student who checked in on the wheel without anyone having to pull out a phone.</span></p>
+      <p>Live Roster grabs that list, splits it however I need (guys, girls, high school, middle school, HS guys, MS girls, a single grade, or first-time guests), and gives me a <b>Copy</b> button for each. I paste it into Sidekick and we're playing. It's free to run, so I'm sharing it with any youth pastor who wants it.</p>
+      <p class="aside"><span class="aside-ic">📵</span><span><b>Great for phones-away groups, too.</b> If your group already puts phones away, or not every student has a phone, joining by scanning a QR code isn't really an option. Live Roster puts every student who checked in into Sidekick without anyone having to pull out a phone.</span></p>
+    </div>
+  </section>
+
+  <section id="ideas">
+    <div class="kicker">Ideas for using it</div>
+    <h2>Ways to use it in Sidekick Pro</h2>
+    <p class="sub">Copy a group in Live Roster, paste it into any of these, and you're ready to go.</p>
+    <div class="ideas">
+      <div class="idea star"><span class="badge">Best pick</span><div class="ic">🎯</div><h3>Pick Me: random student</h3><p>Paste any group into Pick Me's <b>Bulk Add</b>. Use it to choose game contestants, who answers a discussion question, who reads the verse, or who closes in prayer.</p><span class="limit">Any size crowd</span></div>
+      <div class="idea"><div class="ic">🎡</div><h3>Wheel of Destiny</h3><p>The classic spin. It's perfect for smaller groups like HS Guys or MS Girls. Live Roster flags any group that's too big for the wheel.</p><span class="limit">Up to 30 names</span></div>
+      <div class="idea"><div class="ic">🎁</div><h3>Boxes: mystery pick</h3><p>Paste names so each box hides a student, then reveal who's up next. It's a fresh twist when the wheel gets old.</p><span class="limit">Up to 50 names</span></div>
+      <div class="idea"><div class="ic">🏆</div><h3>Leaderboard: team games</h3><p>Make even teams in Live Roster and paste the team names into Leaderboard. You can also run guys vs. girls, HS vs. MS, or grade wars.</p><span class="limit">Up to 20 teams</span></div>
+      <div class="idea"><div class="ic">🧠</div><h3>Trivia, Survey Says &amp; Pixelate</h3><p>Use Pick Me loaded with tonight's crowd to fairly choose who comes up front to play, or pull only from one group.</p></div>
+      <div class="idea"><div class="ic">👋</div><h3>Welcome first-time guests</h3><p>Copy the First-timers group onto a welcome slide, give them a shout-out, or run a "first-timer prize" pick so new students feel seen.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="spot">
+      <div>
+        <div class="kicker">New</div>
+        <h2>👥 Make even teams in one click</h2>
+        <p>Pick a group and how many teams you want (or how many people per team). Live Roster deals everyone out fairly.</p>
+        <ul>
+          <li><b>Balanced</b> by guys, girls, and grade, so no team is stacked</li>
+          <li><b>Color names</b> (Red, Blue, Green…) that paste straight into Sidekick's <b>Leaderboard</b></li>
+          <li><b>Show on screen</b> full-size for the projector, or copy the teams onto a slide</li>
+          <li><b>Late arrivals?</b> One click adds them to the teams without reshuffling</li>
+        </ul>
+      </div>
+      <div class="mini-teams" aria-label="Example teams with made-up names">
+        <div class="mt" style="--tc:#ff6b6b"><b>Red</b><small>6 · 3 guys · 3 girls</small><span>Abby, Caleb, Ivy, Luke, Nora, Eli</span></div>
+        <div class="mt" style="--tc:#5b8cff"><b>Blue</b><small>6 · 3 guys · 3 girls</small><span>Ella, Jonah, Ruby, Noah, Zoe, Asher</span></div>
+        <div class="mt" style="--tc:#4cd97b"><b>Green</b><small>6 · 3 guys · 3 girls</small><span>Grace, Owen, Lily, Silas, Maya, Levi</span></div>
+        <div class="mt" style="--tc:#ffd23f"><b>Yellow</b><small>6 · 3 guys · 3 girls</small><span>Chloe, Micah, Leah, Gabe, Claire, Wyatt</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="spot">
+      <div class="welcome" aria-label="Example first-timer welcome with made-up names">
+        <div class="wave">👋</div>
+        <b>Welcome!</b>
+        <span>First time at youth group tonight</span>
+        <div class="names"><i>Maya</i><i>Owen</i><i>Ruby</i></div>
+      </div>
+      <div>
+        <div class="kicker">New</div>
+        <h2>Spot your first-time guests</h2>
+        <p>Planning Center knows when a student checks in for the very first time. Live Roster gathers them into a <b>First-timers</b> group so you can:</p>
+        <ul>
+          <li>Paste their names onto a <b>welcome slide</b></li>
+          <li>Give them a <b>shout-out</b> or a first-timer prize</li>
+          <li>Make sure a leader <b>connects with each of them</b> before they leave</li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -173,7 +262,7 @@ footer{color:var(--dim);font-size:13px;text-align:center;padding:30px 20px 40px}
     <div class="needs">
       <div class="need"><div class="ic">🗂️</div><b>Planning Center Check-Ins</b><span>Your own login, with access to your youth events' check-ins. You don't need to be an admin.</span></div>
       <div class="need"><div class="ic">💻</div><b>A Mac</b><span>The same Mac you run Sidekick Pro on, using Safari, Chrome, or Edge.</span></div>
-      <div class="need"><div class="ic">🎡</div><b>Sidekick Pro</b><span>Or any slideshow or name picker that lets you paste in a list of names.</span></div>
+      <div class="need"><div class="ic">🎯</div><b>Sidekick Pro</b><span>Pick Me, the wheel, Boxes, or Leaderboard. Anything you can paste names into works.</span></div>
     </div>
   </section>
 
@@ -184,7 +273,7 @@ footer{color:var(--dim);font-size:13px;text-align:center;padding:30px 20px 40px}
     <div class="steps">
       <div class="step"><div>
         <h3>Open Live Roster</h3>
-        <p>Go to <a href="./">wheelreadysidekickpal.github.io</a>. Bookmark it, or install it with the optional step below.</p>
+        <p>Go to <a href="./">liverostersidekickpal.github.io</a>. Bookmark it, or install it with the optional step below.</p>
       </div></div>
       <div class="step"><div>
         <h3>Sign in with Planning Center</h3>
@@ -206,12 +295,12 @@ footer{color:var(--dim);font-size:13px;text-align:center;padding:30px 20px 40px}
 
   <section>
     <div class="kicker">Every youth night</div>
-    <h2>Open, copy, paste, spin</h2>
+    <h2>Open, copy, paste, play</h2>
     <p class="sub">There's no refreshing or setup. The list updates every 30 seconds as students check in.</p>
     <div class="night">
       <div class="ncard"><div class="big">⚡</div><h3>1. Open Live Roster</h3><p>It's already on tonight's event, with everyone who has checked in so far.</p></div>
-      <div class="ncard"><div class="big">📋</div><h3>2. Copy a group</h3><p>Pick a group, like <b>Everyone</b>, <b>HS Guys</b>, or <b>MS Girls</b>, and click <b>Copy list</b>.</p></div>
-      <div class="ncard"><div class="big">🎡</div><h3>3. Paste into Sidekick</h3><p>Open the wheel in Sidekick Pro and paste the names into its list. That's it, time to spin.</p></div>
+      <div class="ncard"><div class="big">📋</div><h3>2. Copy a group</h3><p>Pick a group, like <b>Everyone</b>, <b>HS Guys</b>, or <b>First-timers</b>, and click <b>Copy list</b>. Or make teams.</p></div>
+      <div class="ncard"><div class="big">🎯</div><h3>3. Paste into Sidekick</h3><p>In Pick Me, open <b>Bulk Add</b> and paste. All the names go in at once. Time to play.</p></div>
     </div>
   </section>
 
@@ -219,14 +308,14 @@ footer{color:var(--dim);font-size:13px;text-align:center;padding:30px 20px 40px}
     <div class="kicker">Handy extras</div>
     <h2>Good to know</h2>
     <ul class="tips">
+      <li><b>Your groups:</b> Everyone, Guys, Girls, HS, MS, First-timers, HS Guys, HS Girls, MS Guys, MS Girls, plus each grade.</li>
+      <li><b>30+ names?</b> Sidekick's wheel holds 30, so Live Roster flags bigger groups. Use Pick Me for those.</li>
       <li><b>Name style:</b> choose first names, first name + last initial, or full names. <b>Smart</b> adds a last initial only when two students share a first name.</li>
-      <li><b>Paste format:</b> one name per line, or commas, whichever your wheel accepts.</li>
+      <li><b>Paste format:</b> one name per line, or commas, whichever works best where you're pasting.</li>
       <li><b>Someone left early?</b> Click 👀 on a group and untick them.</li>
       <li><b>Missing gender or grade?</b> A note tells you who's missing info, and you can set it right there. Your fix is remembered on that computer.</li>
       <li><b>Different grade levels?</b> In ⚙ Settings, you can change which grades count as middle school and high school.</li>
       <li><b>Leaders</b> who check in as volunteers are left out unless you turn them on in Settings.</li>
-      <li><b>Looking back:</b> the night menu lets you pull up any recent youth night.</li>
-      <li><b>Your groups:</b> Everyone, Guys, Girls, HS, MS, HS Guys, HS Girls, MS Guys, MS Girls, plus each grade.</li>
     </ul>
   </section>
 
@@ -234,7 +323,9 @@ footer{color:var(--dim);font-size:13px;text-align:center;padding:30px 20px 40px}
     <div class="kicker">Questions</div>
     <h2>FAQ</h2>
     <details><summary>Does it cost anything?</summary><p>No. It's free, and there's no account to make beyond the Planning Center login you already have.</p></details>
+    <details><summary>Why Pick Me instead of the wheel?</summary><p>Both work great! Sidekick's wheel holds up to 30 names, so on bigger nights, Pick Me is the way to go: it takes any size list, and its Bulk Add lets you paste everyone at once. The wheel is perfect for smaller groups like HS Guys or MS Girls.</p></details>
     <details><summary>Do I need to be a Planning Center admin?</summary><p>No. You just need to be able to see your youth events' check-ins in Planning Center Check-Ins. If you can't see an event there, Live Roster can't either. Ask your church's Planning Center admin for Check-Ins access.</p></details>
+    <details><summary>How does it know who's a first-timer?</summary><p>Planning Center Check-Ins marks a student's very first check-in. Live Roster simply shows those students in the First-timers group.</p></details>
     <details><summary>Is my students' information safe?</summary><p>Live Roster only asks Planning Center for names, gender, and grade. It never downloads addresses, phone numbers, or medical notes. The list goes straight from Planning Center to your browser, and nothing is stored anywhere except your own computer.</p></details>
     <details><summary>Will I have to sign in every week?</summary><p>No. You stay signed in on that computer. Planning Center only asks again if you don't use Live Roster for 90 days.</p></details>
     <details><summary>It says no one has checked in, or I don't see my events.</summary><p>Make sure the right events are ticked in ⚙ Settings, and that the event has a session today in Check-Ins. Live Roster shows tonight as soon as Check-Ins opens the session, and the list fills in as students check in.</p></details>
@@ -246,7 +337,7 @@ footer{color:var(--dim);font-size:13px;text-align:center;padding:30px 20px 40px}
     <h2>Ready for your next game night?</h2>
     <p>Set it up once, then copy tonight's crowd in one click every week.</p>
     <a class="btn" href="./">Open Live Roster →</a><br>
-    <span class="url">https://wheelreadysidekickpal.github.io</span>
+    <span class="url">https://liverostersidekickpal.github.io</span>
   </div>
 </div>
 <footer>Made by a youth pastor, for youth pastors. Free to use and share.<br>Not affiliated with Download Youth Ministry, Sidekick Pro, or Planning Center.</footer>
